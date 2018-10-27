@@ -1,0 +1,32 @@
+La centralina è una Magneti Marelli che dovrebbe essere molto valida
+
+Camere Plausibili : http://www.ti.com/tool/TIDA-01130
+
+Gli Attutatori da realizzare sono 4
+Freno :
+  - Bisogna sviluppare un sistema "Brake by Wire", concesso dal regolamento solo in condzione Driverless (T6.1.4), quindi
+    complementare ai due sistemi idraulici già presenti sulla combustion (T6.1.2)
+    Necessario:
+      - Capire come sia stato realizzato il pedale del Freno
+      - Due Motori Elettrici che producano pressione nel circuito idraulico dei freni
+      - Sensore velocità istantaneo E non su ogni singola ruota, collegato al MCU (1)
+      - Due Accelerometri posti sulla stessa linea su parti opposte dell'auto (2) NB Almeno uno sembra già essere presente, verificare
+      - Giroscopio (5) - NB Sembra già essere presente, verificare
+      - Sensore pressione idraulica su entrambi i circuiti (3)
+      NB Il GPS non appare come un sistema indispensabile, in quanto è consentito nella sua forma base, imprecisa, GPS
+      e in forma DGPS, più precisa, ma senza la sicurezza di poterlo utilizzare, dunque è preferibile non utilizzarlo.
+      - Microcontrollore che gestisca i due motori collegato al CAN BUS, i dati provenienti da (1, 2, 3)
+Acceleratore :
+  -Necessario:
+    - Sensore Pedale Acceleratore (Opzionale) (4)
+    - Bisogna verificare che tutta la parte di Acceleratore sia elettronica
+    - Microcontrollore dedicato collegato al CAN BUS, dovrà:
+      - Interfacciarsi con la centralina Magneti Marelli, in modo da simulare la pressione del pedale (0% - 100%)
+Sterzo :
+  Steering systems using cables or belts for actuation are prohibited.
+  [DV ONLY] This does not apply for autonomous steering actuators.
+  (T2.6.2) The steering wheel must directly mechanically actuate the front wheels
+  Necessario:
+    - Motore Elettrico ( Stepper Motor ? ) con controllo coppia angolare
+    - MCU collegato al CAN BUS con controllo del motore dello sterzo
+Frizione + Cambio Marcia :

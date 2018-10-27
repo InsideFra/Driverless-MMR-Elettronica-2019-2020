@@ -1,0 +1,44 @@
+Da Regolamento il GND DEVE essere il telaio ( come e' giusto che sia )
+NB File da completare
+
+Vano Motore Connettori
+
+LAMBDA1 : 5 fili
+LAMBDA2 : 5 fili
+HB1 :  2 fili
+HB2 :  2 fili
+TPS1 : 3 fili
+TPS2 : 3 fili
+T_OIL : 2 fili
+P_OIL : 3 fili
+P_FUEL : 3 fili
+
+IGN1/2/3/4 : 2 fili per connettore
+SCAM : 3 fili
+SMOT : 2 fili
+GEAR : 3 fili
+MAP : 4 fili
+T_H2O : 2 fili
+INJ1/2/3/4/5/6/7/8 : 2 fili per connettore
+----------------
+
+Alimentazione Generale
+I 12v provengono dal master switch ( Bisogna capire a cosa e' collegato )
+
+Water Pump : 2 fili
+Air_FAN_1/2 : 2 fili per connettore
+Fuel_PUMP : 4 connettore a due due uguali
+Regolatore Tensione : 6 fili a tre tre uguale (Surce ? <-- scoperto essere il fusibile positivo (della batteria ? ) - GND Telaio )
+Brake_Light : 2 fili (12v - GND_POST_LUCE  <-- da controllare bene )
+GND_POST_ TELAIO -> BRAKE SWITCH -> GND TELAIO
+Connettore Batteria : 4 GND,  3 12v, 3 VKEY
+Connettore Cruscotto : GND_POST_LUCE, START, KEY/H2O/FAN/FUEL_CONTROL
+REL =? RELAY  ---> Si son relay ( Se previsto dal regolamento sarebbe carino toglierli )
+Sono previsti dal regolamento : Fuel PUMP, injectors, ignition
+REL FUEL/FAN/H20 : ENABLE, FUEL/FAN/H20 CONTROL, 12V, FUEL/FAN/WATER PWR
+REL KEY : 4 fili
+REL SEC : 4 fili
+SICUREZZA_M : 2 fili
+BSPD2 : 3 fili
+REL AVV1/2
+---------------------
