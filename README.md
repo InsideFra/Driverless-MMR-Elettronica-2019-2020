@@ -2,9 +2,10 @@
 Repository create to mantain track of diff about Electrical end Electronic System ( by 26/10/2018 ) of Combustion Car created ( by Combustion Team from UNIMORE ) to develop a total driverless car
 
 Centralina :
-<ul>Bisogna verificare il tipo di centralina, sembra una Magneti Marelli visto che usano il software sysma
-</ul>
-<p>Da decidere</p><ul>
+Bisogna verificare il tipo di centralina, sembra una Magneti Marelli visto che usano il software sysma
+
+<p>Da decidere</p>
+<ul>
   <li>Sensore camera Plausibili :
       <ul>
         <li>http://www.ti.com/tool/TIDA-01130</li>
@@ -33,6 +34,7 @@ Centralina :
   <b>Freno</b> :
   - Bisogna sviluppare un sistema "Brake by Wire", concesso dal regolamento <b>solo durante la guida Driverless</b> (T6.1.4), quindi
     complementare ai due sistemi idraulici già presenti sulla combustion (T6.1.2)
+
 
     <p>Possibile soluzione: Dietro al giunto, che collega la leva del freno alla pompa del freno, potrebbe essere inserito un attuatore lineare non collegato
     alla leva del freno. In questo modo, in caso di guida manuale, la leva del freno continuerà a funzionare anche senza il funzionamento dell'attuatore
