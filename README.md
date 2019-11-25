@@ -30,7 +30,7 @@ Centralina :
 </ul>
 
 <p>Gli Attutatori da realizzare sono 4</p><ul>
-  <li><b>Freno</b> :
+  <b>Freno</b> :
   - Bisogna sviluppare un sistema "Brake by Wire", concesso dal regolamento <b>solo durante la guida Driverless</b> (T6.1.4), quindi
     complementare ai due sistemi idraulici già presenti sulla combustion (T6.1.2)
 
@@ -84,7 +84,6 @@ Centralina :
           </ul>
         </li>
     </ul>
-</li>
 <br>
 <hr>
 <h5 style = "text-align:center"> Da finire </h5>
