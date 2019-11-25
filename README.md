@@ -1,4 +1,4 @@
-# Driverless-MMR-Elettronica-Minichelli
+# Driverless-MMR-Elettronica
 Repository create to mantain track of diff about Electrical end Electronic System ( by 26/10/2018 ) of Combustion Car created ( by Combustion Team from UNIMORE ) to develop a total driverless car
 
 Centralina :
@@ -34,24 +34,26 @@ Bisogna verificare il tipo di centralina, sembra una Magneti Marelli visto che u
   <b>Freno</b> :
   - Bisogna sviluppare un sistema "Brake by Wire", concesso dal regolamento <b>solo durante la guida Driverless</b> (T6.1.4), quindi
     complementare ai due sistemi idraulici già presenti sulla combustion (T6.1.2)
-
-
+    
     <p>Possibile soluzione: Dietro al giunto, che collega la leva del freno alla pompa del freno, potrebbe essere inserito un attuatore lineare non collegato
     alla leva del freno. In questo modo, in caso di guida manuale, la leva del freno continuerà a funzionare anche senza il funzionamento dell'attuatore
     In caso di guida autonoma, il movimento dell'attuatore muoverà la leva del freno, creando pressione
     Per sicurezza, sono necessari due attuatori, con fili di controllo separati
     </p>
-    <p>Necessario:</p><ul>
+    <p>Necessario:</p>
+    <ul>
       <li>- Dal disegno sul cad, la leva del freno agisce su due pompe che creano pressione sui due sistemi idraulici.</li>
-      <li>- Due Motori Elettrici che producano pressione nel circuito idraulico dei freni (Due attuatori lineari sembrano già essere stati scelti, con relativo disegno CAD)
-      </li><li>- Sensore velocità (istantaneo E non) su ogni singola ruota, collegato al MCU (1)
-      </li><li>- Due Accelerometri posti sulla stessa linea su parti opposte dell'auto (2) <br><i> NB Almeno uno sembra già essere presente, verificare </i>
-      </li><li>- Giroscopio (5) - <i>NB Sembra già essere presente, verificare</i>
-      </li><li>- Sensore pressione idraulica su entrambi i circuiti (3)
+      <li>- Due Motori Elettrici che producano pressione nel circuito idraulico dei freni (Due attuatori lineari sembrano già essere stati scelti, con relativo disegno CAD)</li>
+      <li>- Sensore velocità (istantaneo E non) su ogni singola ruota, collegato al MCU (1)
+      </li>
+      <li>- Due Accelerometri posti sulla stessa linea su parti opposte dell'auto (2) <br><i> NB Almeno uno sembra già essere presente, verificare </i></li>
+      <li>- Giroscopio (5) - <i>NB Sembra già essere presente, verificare</i></li>
+      <li>- Sensore pressione idraulica su entrambi i circuiti (3)
       <br><i>NB Il GPS non appare come un sistema indispensabile, in quanto è consentito nella sua forma base, imprecisa, GPS
       e in forma DGPS, più precisa, ma senza la sicurezza di poterlo utilizzare, dunque è preferibile non utilizzarlo.
       </i></li><li>- Microcontrollore che gestisca i due motori collegato al CAN BUS e i dati provenienti da (1, 2, 3, 5) </p>
-      </li></ul>
+      </li>
+    </ul>
     Elenco sensori :
     <ul>
         <li> Accelerometro :
