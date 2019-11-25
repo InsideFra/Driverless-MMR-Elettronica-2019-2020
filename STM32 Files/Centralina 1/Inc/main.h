@@ -60,8 +60,23 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define userButtorn_Pin GPIO_PIN_13
 #define userButtorn_GPIO_Port GPIOC
+#define IRQWireless_Pin GPIO_PIN_0
+#define IRQWireless_GPIO_Port GPIOC
+#define IRQWireless_EXTI_IRQn EXTI0_IRQn
+#define Giroscopio_Pin GPIO_PIN_0
+#define Giroscopio_GPIO_Port GPIOA
+#define Accelerometro_Y_Pin GPIO_PIN_1
+#define Accelerometro_Y_GPIO_Port GPIOA
+#define Sensore_Ruota_Pin GPIO_PIN_2
+#define Sensore_Ruota_GPIO_Port GPIOA
+#define Accelerometro_X_Pin GPIO_PIN_3
+#define Accelerometro_X_GPIO_Port GPIOA
 #define userLED_Pin GPIO_PIN_13
 #define userLED_GPIO_Port GPIOB
+#define CSN_Pin GPIO_PIN_10
+#define CSN_GPIO_Port GPIOA
+#define CE_Pin GPIO_PIN_13
+#define CE_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
