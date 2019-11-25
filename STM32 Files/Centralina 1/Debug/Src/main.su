@@ -1,6 +1,6 @@
-main.c:146:6:TIM2_IRQHandler	0	static
-main.c:150:10:millis	0	static
-main.c:151:10:secondi	0	static
-main.c:152:6:SystemClock_Config	120	static
-main.c:78:5:main	56	static
-main.c:377:6:Error_Handler	0	static
+main.c:75:6:TIM2_IRQHandler	0	static
+main.c:79:10:millis	0	static
+main.c:80:10:secondi	0	static
+main.c:158:6:SystemClock_Config	120	static
+main.c:88:5:main	64	static
+main.c:448:6:Error_Handler	0	static

@@ -7,18 +7,14 @@
  version 2 as published by the Free Software Foundation.
  */
 
-#ifndef __RF24_CONFIG_H__
-#define __RF24_CONFIG_H__
-
 #include <stddef.h>
 
 // Stuff that is normally provided by Arduino
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-extern HardwareSPI SPI;
-#define _BV(x) (1<<(x))
-#endif
+
+//#define _BV(x) (1<<(x))
 
 #define IF_SERIAL_DEBUG(x)
 
