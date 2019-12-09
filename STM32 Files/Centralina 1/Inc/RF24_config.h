@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
-//#define _BV(x) (1<<(x))
+#define _BV(x) (1<<(x))
 
 #define IF_SERIAL_DEBUG(x)
 
@@ -32,5 +32,6 @@
 //#define printf_P printf
 //#define strlen_P strlen
 //#define PROGMEM
-//#define pgm_read_word(p) (*(p))
+
+#define pgm_read_word(p) (*(p))
 //#define PRIPSTR "%s"
