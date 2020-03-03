@@ -92,28 +92,30 @@ uint32_t              TxMailbox;
 timestamp 			  Orario = {0, 0, 0, 0};
 uint16_t d = 0;
 SensList SList[NSensori] = {
-		{0,  "Acc X", 		RoutineAccelerometro, 0, 0},
-		{1,  "Acc Y", 		RoutineAccelerometro, 1, 0},
-		{2,  "Giroscopio", 	RoutineGiroscopio, 0, 0},
-		{3,  "RF AS", 		RoutineRF, 0, 0}, // Ruota Fonica
-		{4,  "RF AD", 		RoutineRF, 1, 0}, // Ruota Fonica
-		{5,  "RF PS", 		RoutineRF, 2, 0}, // Ruota Fonica
-		{6,  "RF PD", 		RoutineRF, 3, 0}, // Ruota Fonica
-		{7,  "SMOT",    	RoutineSmot, 0, 0},
-		{8,  "V Batt1", 	RoutineV, 0, 0},
-		{9,  "V Batt2", 	RoutineV, 1, 0},
-		{10, "V Batt3", 	RoutineV, 2, 0},
-		{11, "APPS1",   	RoutineAPPS, 0, 0}, //Potenziometro Acceleratore
-		{12, "APPS2",   	RoutineAPPS, 1, 0}, //Potenziometro Acceleratore Backup
-		{13, "TPS1",    	RoutineTPS, 0, 0},  //Potenziometro Apertura Farfalla
-		{14, "TPS2",    	RoutineTPS, 1, 0},  //Potenziometro Apertura Farfalla Backup
-		{15, "DAC", 		RoutineDAC, 0, 0},	// Acceleratore STM32
-		{16, "Frizione",	RoutineFrizione, 0, 0},
-		{17, "TempOlio", 	RoutineTempOlio, 0, 0},
-		{18, "TempAcqua", 	RoutineTempAcqua, 0, 0},
-		{19, "TempAria",	RoutineTempAria, 0, 0},
-		{20, "GearIns", 	RoutineMarcia, 0, 0} // Marcia Inserita
+	//	ID,  NOME, 			Routine, 			, h, UltimoValore;
+		{0,  "Acc X", 		RoutineAccelerometro, 	0, 0},
+		{1,  "Acc Y", 		RoutineAccelerometro, 	1, 0},
+		{2,  "Giroscopio", 	RoutineGiroscopio, 		0, 0},
+		{3,  "RF AS", 		RoutineRF, 				0, 0}, // Ruota Fonica
+		{4,  "RF AD", 		RoutineRF, 				1, 0}, // Ruota Fonica
+		{5,  "RF PS", 		RoutineRF, 				2, 0}, // Ruota Fonica
+		{6,  "RF PD", 		RoutineRF, 				3, 0}, // Ruota Fonica
+		{7,  "SMOT",    	RoutineSmot, 			0, 0},
+		{8,  "V Batt1", 	RoutineV, 				0, 0},
+		{9,  "V Batt2", 	RoutineV, 				1, 0},
+		{10, "V Batt3", 	RoutineV, 				2, 0},
+		{11, "APPS1",   	RoutineAPPS,			0, 0}, //Potenziometro Acceleratore
+		{12, "APPS2",   	RoutineAPPS, 			1, 0}, //Potenziometro Acceleratore Backup
+		{13, "TPS1",    	RoutineTPS, 			0, 0},  //Potenziometro Apertura Farfalla
+		{14, "TPS2",    	RoutineTPS, 			1, 0},  //Potenziometro Apertura Farfalla Backup
+		{15, "DAC", 		RoutineDAC,				0, 0},	// Acceleratore STM32
+		{16, "Frizione",	RoutineFrizione, 		0, 0},
+		{17, "TempOlio", 	RoutineTempOlio, 		0, 0},
+		{18, "TempAcqua", 	RoutineTempAcqua, 		0, 0},
+		{19, "TempAria",	RoutineTempAria, 		0, 0},
+		{20, "GearIns", 	RoutineMarcia, 			0, 0} // Marcia Inserita
 };
+uint8_t Aggiornamento = 0;
 
 SensDataLog inMemory[3000];
 /* USER CODE END 0 */
@@ -267,7 +269,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim2) {
 		Orario.minuti -= 60;
 	}
 
-	aggSensMemoria();
+	if(Aggiornamento != 1) {
+		aggSensMemoria();
+		Aggiornamento = 1;
+	}
 }
 
 void aggSensMemoria() {
@@ -289,6 +294,7 @@ void aggSensMemoria() {
 		SList[i].lastValoreChecked = ValoreTemp;
 		d++;
 	}
+	Aggiornamento = 0;
 }
 
 void RoutineAccelerometro(uint16_t *buffer, uint8_t helper) {
