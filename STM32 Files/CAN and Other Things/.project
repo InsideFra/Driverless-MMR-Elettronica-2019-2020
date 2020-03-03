@@ -71,11 +71,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>Drivers/STM32F4xx_HAL_Driver/STM32F4xx_HAL_Driver</name>
-			<type>2</type>
-			<location>C:/Users/franc/Desktop/Driverless STM32/CANProject/Drivers/STM32F4xx_HAL_Driver</location>
-		</link>
-	</linkedResources>
 </projectDescription>
