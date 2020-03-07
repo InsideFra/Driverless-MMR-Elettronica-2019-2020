@@ -21,7 +21,12 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-
+extern uint16_t d;
+extern SensDataLog inMemory[3000];
+uint16_t lastSensDump = 0;
+uint16_t i = 0;
+uint8_t dataFormat[25] = "[00:00:00:000] 000 0000;";
+uint8_t bufferRxUART[8] = {0};
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart2;
@@ -43,6 +48,11 @@ void MX_USART2_UART_Init(void)
   {
     Error_Handler();
   }
+
+  //__HAL_UART_ENABLE_IT(USART2, UART_IT_TC);
+  //__HAL_UART_ENABLE_IT(USART2, UART_IT_RXNE);
+
+  HAL_UART_Receive_IT(&huart2, bufferRxUART, 8*sizeof(uint8_t));
 
 }
 
@@ -100,7 +110,108 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+void dumpMemoriaUART() {
+	i = 0;
+	adjustTimestamp(dataFormat, inMemory[i].tmps);
+	adjustID(dataFormat, inMemory[i].IDSensore);
+	adjustValue(dataFormat, inMemory[i].Valore);
 
+	HAL_UART_Transmit_IT(&huart2, dataFormat, 25);
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart2) {
+	lastSensDump++;
+	if(lastSensDump < d) {
+		i = lastSensDump;
+		adjustTimestamp(dataFormat, inMemory[i].tmps);
+		adjustID(dataFormat, inMemory[i].IDSensore);
+		adjustValue(dataFormat, inMemory[i].Valore);
+		HAL_UART_Transmit_IT(huart2, dataFormat, 25);
+
+	} else {
+		d = 0;
+		lastSensDump = 0;
+	}
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart2) {
+	switch(bufferRxUART[0]) {
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	default:
+		break;
+	}
+}
+
+void adjustTimestamp(uint8_t *buffer, timestamp tmp) {
+	uint16_t millis = tmp.millis;
+	//uint8_t sec = tmp.secondi;
+	//uint8_t min = tmp.minuti;
+	//uint8_t ore  = tmp.ore;
+
+	if (millis < 10)
+	{
+		buffer[10] = '0';
+		buffer[11] = '0';
+		buffer[12] = '0' + millis%10;
+	}
+	else if (millis < 100)
+	{
+		buffer[10] = '0';
+		buffer[11] = '0' + millis/10;
+		buffer[12] = '0' + millis - millis/10 * 10;
+	}
+	else
+	{
+		buffer[10] = '0' + millis/100;
+		buffer[11] = '0' + (millis - millis/100 * 100)/10;
+		buffer[12] = '0' + millis - (millis/10) * 10;
+	}
+}
+
+void adjustID(uint8_t *buffer, uint8_t ID) {
+	if(ID < 10) {
+		buffer[15] = '0';
+		buffer[16] = '0';
+		buffer[17] = '0' + ID%10;
+	} else if(ID < 100) {
+		buffer[15] = '0';
+		buffer[16] = '0' + ID/10;
+		buffer[17] = '0' + ID - ID/10 * 10;
+	} else if(ID < 1000) {
+		buffer[15] = '0' + ID/100;
+		buffer[16] = '0' + (ID - ID/100 * 100)/10;
+		buffer[17] = '0' + ID - (ID/10) * 10;
+	}
+}
+
+void adjustValue(uint8_t *buffer, uint16_t Value) {
+	if (Value < 10) {
+		buffer[19] = '0';
+		buffer[20] = '0';
+		buffer[21] = '0';
+		buffer[22] = '0' + Value%10;
+	} else if(Value < 100) {
+		buffer[19] = '0';
+		buffer[20] = '0';
+		buffer[21] = '0' + Value/10;
+		buffer[22] = '0' + Value - Value/10 * 10;
+	} else if(Value < 1000) {
+		buffer[19] = '0';
+		buffer[20] = '0' + Value/100;
+		buffer[21] = '0' + (Value - Value/100 * 100)/10;
+		buffer[22] = '0' + Value - (Value/10) * 10;
+	} else if(Value < 10000) {
+		buffer[19] = '0' + Value/1000;
+		buffer[20] = '0' + Value - (Value/1000 * 1000)/100;
+		buffer[21] = '0' + Value - (Value/100 * 100)/10;
+		buffer[22] = '0' + Value - (Value/10 * 10);
+	}
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

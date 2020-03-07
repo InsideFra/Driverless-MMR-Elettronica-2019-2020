@@ -38,6 +38,27 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+typedef struct {
+	uint16_t millis;
+	uint8_t secondi;
+	uint8_t minuti;
+	uint8_t ore;
+} timestamp;
+
+typedef struct {
+	uint8_t IDSensore;
+	uint16_t Valore;
+	timestamp tmps;
+} SensDataLog;
+
+typedef struct {
+	uint8_t IDSensore;
+	char Nome[24];
+	void (*func)(uint16_t *buffer, uint8_t helper);
+	uint8_t helper;
+	uint16_t lastValoreChecked;
+} SensList;
+
 void sensCanReq();
 void RoutineAccelerometro(uint16_t *buffer, uint8_t helper);
 void RoutineRF(uint16_t *buffer, uint8_t helper);

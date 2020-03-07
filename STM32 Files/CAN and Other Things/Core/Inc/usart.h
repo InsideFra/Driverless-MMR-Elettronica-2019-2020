@@ -33,7 +33,11 @@
 extern UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN Private defines */
+void dumpMemoriaUART();
 
+void adjustTimestamp(uint8_t *buffer, timestamp tmp);
+void adjustID(uint8_t *buffer, uint8_t ID);
+void adjustValue(uint8_t *buffer, uint16_t Value);
 /* USER CODE END Private defines */
 
 void MX_USART2_UART_Init(void);

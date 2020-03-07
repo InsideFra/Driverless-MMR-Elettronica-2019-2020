@@ -35,26 +35,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-typedef struct {
-	uint16_t millis;
-	uint8_t secondi;
-	uint8_t minuti;
-	uint8_t ore;
-} timestamp;
 
-typedef struct {
-	uint8_t IDSensore;
-	uint16_t Valore;
-	timestamp tmps;
-} SensDataLog;
-
-typedef struct {
-	uint8_t IDSensore;
-	char Nome[24];
-	void (*func)(uint16_t *buffer, uint8_t helper);
-	uint8_t helper;
-	uint16_t lastValoreChecked;
-} SensList;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -77,7 +58,7 @@ typedef struct {
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+extern void dumpMemoriaUART();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -92,32 +73,31 @@ uint32_t              TxMailbox;
 timestamp 			  Orario = {0, 0, 0, 0};
 uint16_t d = 0;
 SensList SList[NSensori] = {
-	//	ID,  NOME, 			Routine, 			, h, UltimoValore;
-		{0,  "Acc X", 		RoutineAccelerometro, 	0, 0},
-		{1,  "Acc Y", 		RoutineAccelerometro, 	1, 0},
-		{2,  "Giroscopio", 	RoutineGiroscopio, 		0, 0},
-		{3,  "RF AS", 		RoutineRF, 				0, 0}, // Ruota Fonica
-		{4,  "RF AD", 		RoutineRF, 				1, 0}, // Ruota Fonica
-		{5,  "RF PS", 		RoutineRF, 				2, 0}, // Ruota Fonica
-		{6,  "RF PD", 		RoutineRF, 				3, 0}, // Ruota Fonica
-		{7,  "SMOT",    	RoutineSmot, 			0, 0},
-		{8,  "V Batt1", 	RoutineV, 				0, 0},
-		{9,  "V Batt2", 	RoutineV, 				1, 0},
-		{10, "V Batt3", 	RoutineV, 				2, 0},
-		{11, "APPS1",   	RoutineAPPS,			0, 0}, //Potenziometro Acceleratore
-		{12, "APPS2",   	RoutineAPPS, 			1, 0}, //Potenziometro Acceleratore Backup
-		{13, "TPS1",    	RoutineTPS, 			0, 0},  //Potenziometro Apertura Farfalla
-		{14, "TPS2",    	RoutineTPS, 			1, 0},  //Potenziometro Apertura Farfalla Backup
-		{15, "DAC", 		RoutineDAC,				0, 0},	// Acceleratore STM32
-		{16, "Frizione",	RoutineFrizione, 		0, 0},
-		{17, "TempOlio", 	RoutineTempOlio, 		0, 0},
-		{18, "TempAcqua", 	RoutineTempAcqua, 		0, 0},
-		{19, "TempAria",	RoutineTempAria, 		0, 0},
+	//	ID,  NOME, 			Routine, 			 	h, UltimoValore;
+		{0,  "Acc X", 		RoutineAccelerometro, 	0, 0}, // Analogico
+		{1,  "Acc Y", 		RoutineAccelerometro, 	1, 0}, // Analogico
+		{2,  "Giroscopio", 	RoutineGiroscopio, 		0, 0}, // Analogico
+		{3,  "RF AS", 		RoutineRF, 				0, 0}, // Ruota Fonica, Digitale
+		{4,  "RF AD", 		RoutineRF, 				1, 0}, // Ruota Fonica, Digitale
+		{5,  "RF PS", 		RoutineRF, 				2, 0}, // Ruota Fonica, Digitale
+		{6,  "RF PD", 		RoutineRF, 				3, 0}, // Ruota Fonica, Digitale
+		{7,  "SMOT",    	RoutineSmot, 			0, 0}, // Sens. giri motore, Digitale
+		{8,  "V Batt1", 	RoutineV, 				0, 0}, // Analogico, V Batteria 12v
+		{9,  "V Batt2", 	RoutineV, 				1, 0}, // Analogico, V Batteria 12v
+		{10, "V Batt3", 	RoutineV, 				2, 0}, // Analogico, V Batteria 12v
+		{11, "APPS1",   	RoutineAPPS,			0, 0}, // Potenziometro Acceleratore
+		{12, "APPS2",   	RoutineAPPS, 			1, 0}, // Potenziometro Acceleratore Backup
+		{13, "TPS1",    	RoutineTPS, 			0, 0}, // Potenziometro Apertura Farfalla
+		{14, "TPS2",    	RoutineTPS, 			1, 0}, // Potenziometro Apertura Farfalla Backup
+		{15, "DAC", 		RoutineDAC,				0, 0}, // Acceleratore STM32
+		{16, "Frizione",	RoutineFrizione, 		0, 0}, //
+		{17, "TempOlio", 	RoutineTempOlio, 		0, 0}, // Sens. Temp. Olio,		Analogico
+		{18, "TempAcqua", 	RoutineTempAcqua, 		0, 0}, // Sens. Temp. Acqua, 	Analogico
+		{19, "TempAria",	RoutineTempAria, 		0, 0}, // Sens. Temp. Aria Asp, Analogico
 		{20, "GearIns", 	RoutineMarcia, 			0, 0} // Marcia Inserita
 };
 uint8_t Aggiornamento = 0;
-
-SensDataLog inMemory[3000];
+SensDataLog inMemory[4000];
 /* USER CODE END 0 */
 
 /**
@@ -156,9 +136,7 @@ int main(void)
   MX_TIM2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -168,58 +146,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
-}
-
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
-
-  /** Configure the main internal regulator output voltage 
-  */
-  __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
-  /** Initializes the CPU, AHB and APB busses clocks 
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 66;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
-  RCC_OscInitStruct.PLL.PLLR = 2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Initializes the CPU, AHB and APB busses clocks 
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SDIO|RCC_PERIPHCLK_CLK48;
-  PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48CLKSOURCE_PLLQ;
-  PeriphClkInitStruct.SdioClockSelection = RCC_SDIOCLKSOURCE_CLK48;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
 }
 
 /* USER CODE BEGIN 4 */
@@ -270,15 +196,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim2) {
 	}
 
 	if(Aggiornamento != 1) {
-		aggSensMemoria();
 		Aggiornamento = 1;
+		aggSensMemoria();
+		Aggiornamento = 0;
 	}
 }
 
 void aggSensMemoria() {
 	if (d >= MAXDATA-NSensori) {
-		// Dump immediato
-		d = 0;
+		dumpMemoriaUART();
 	}
 	for (uint8_t i = 0; i < NSensori; i++) {
 		timestamp tsmpTemp = {Orario.millis,
@@ -294,7 +220,6 @@ void aggSensMemoria() {
 		SList[i].lastValoreChecked = ValoreTemp;
 		d++;
 	}
-	Aggiornamento = 0;
 }
 
 void RoutineAccelerometro(uint16_t *buffer, uint8_t helper) {
@@ -337,6 +262,58 @@ void RoutineTempAria(uint16_t *buffer, uint8_t helper) {
 
 }
 /* USER CODE END 4 */
+
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Configure the main internal regulator output voltage
+  */
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  /** Initializes the CPU, AHB and APB busses clocks
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 66;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLR = 2;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Initializes the CPU, AHB and APB busses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SDIO|RCC_PERIPHCLK_CLK48;
+  PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48CLKSOURCE_PLLQ;
+  PeriphClkInitStruct.SdioClockSelection = RCC_SDIOCLKSOURCE_CLK48;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
