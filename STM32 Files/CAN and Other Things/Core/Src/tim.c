@@ -21,7 +21,9 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
-
+extern timestamp Orario;
+extern uint8_t Aggiornamento;
+extern void aggSensMemoria();
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
@@ -96,7 +98,27 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim2) {
+	Orario.millis++;
+	if(Orario.millis >= 1000) {
+		Orario.secondi++;
+		Orario.millis -= 1000;
+	}
+	if(Orario.secondi >= 60) {
+		Orario.minuti++;
+		Orario.secondi -= 60;
+	}
+	if(Orario.minuti >= 60 ) {
+		Orario.ore++;
+		Orario.minuti -= 60;
+	}
 
+	if(Aggiornamento != 1) {
+		Aggiornamento = 1;
+		aggSensMemoria();
+		Aggiornamento = 0;
+	}
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

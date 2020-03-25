@@ -149,57 +149,9 @@ int main(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
-{
-  HAL_CAN_DeactivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING);
-
-  /* Get RX message */
-  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
-    Error_Handler();
-
-  /* Display LEDx
-  if ((RxHeader.StdId == 0x321) && (RxHeader.IDE == CAN_ID_STD) && (RxHeader.DLC == 2))
-  {
-    LED_Display(RxData[0]);
-    ubKeyNumber = RxData[0];
-  } */
-
-  /* Set the data to be transmitted
-  TxData[0] = ubKeyNumber;
-  TxData[1] = 0xAD;
-
-  // Start the Transmission process
-  if (HAL_CAN_AddTxMessage(&CanHandle, &TxHeader, TxData, &TxMailbox) != HAL_OK)
-	// Transmission request Error
-	Error_Handler();
-  */
-  HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING);
-}
 
 void sensCanReq() {
 
-}
-
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim2) {
-	Orario.millis++;
-	if(Orario.millis >= 1000) {
-		Orario.secondi++;
-		Orario.millis -= 1000;
-	}
-	if(Orario.secondi >= 60) {
-		Orario.minuti++;
-		Orario.secondi -= 60;
-	}
-	if(Orario.minuti >= 60 ) {
-		Orario.ore++;
-		Orario.minuti -= 60;
-	}
-
-	if(Aggiornamento != 1) {
-		Aggiornamento = 1;
-		aggSensMemoria();
-		Aggiornamento = 0;
-	}
 }
 
 void aggSensMemoria() {
