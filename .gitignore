@@ -2,3 +2,15 @@ CAN and Other Things
 !CAN and Other Things/Core/
 !CAN and Other Things/FATFS/
 !CAN and Other Things/.mxproject
+STM32 Files/CAN and Other Things/Debug/CANProject.elf
+STM32 Files/CAN and Other Things/Debug/CANProject.hex
+STM32 Files/CAN and Other Things/Debug/CANProject.list
+STM32 Files/CAN and Other Things/Debug/CANProject.map
+STM32 Files/CAN and Other Things/Debug/CANProject.hex
+STM32 Files/CAN and Other Things/Debug/Core/Src/spi.o
+STM32 Files/CAN and Other Things/Debug/Core/Src/sdio.o
+STM32 Files/CAN and Other Things/Debug/Core/Src/main.su
+STM32 Files/CAN and Other Things/Debug/Core/Src/gpio.o
+STM32 Files/CAN and Other Things/Debug/Core/Src/dac.o
+STM32 Files/CAN and Other Things/Debug/Core/Src/can.o
+STM32 Files/CAN and Other Things/Debug/CANProject.map
