@@ -40,8 +40,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define MAXDATA 3000
-#define NSensori 21
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -63,6 +61,13 @@ extern void dumpMemoriaUART();
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+// 	ENGINE RPM SECTION
+uint8_t engineTickUPD = 1; // millisecondi
+
+//	ENGINE RPM SECTION
+uint8_t memBusy = 0;
+
 uint8_t newCanRx = 0;
 
 CAN_TxHeaderTypeDef   TxHeader;
@@ -81,7 +86,7 @@ SensList SList[NSensori] = {
 		{4,  "RF AD", 		RoutineRF, 				1, 0}, // Ruota Fonica, Digitale
 		{5,  "RF PS", 		RoutineRF, 				2, 0}, // Ruota Fonica, Digitale
 		{6,  "RF PD", 		RoutineRF, 				3, 0}, // Ruota Fonica, Digitale
-		{7,  "SMOT",    	RoutineSmot, 			0, 0}, // Sens. giri motore, Digitale
+		{7,  "SMOT",    	noRoutine, 				0, 0}, // Sens. giri motore, Digitale
 		{8,  "V Batt1", 	RoutineV, 				0, 0}, // Analogico, V Batteria 12v
 		{9,  "V Batt2", 	RoutineV, 				1, 0}, // Analogico, V Batteria 12v
 		{10, "V Batt3", 	RoutineV, 				2, 0}, // Analogico, V Batteria 12v
@@ -96,8 +101,12 @@ SensList SList[NSensori] = {
 		{19, "TempAria",	RoutineTempAria, 		0, 0}, // Sens. Temp. Aria Asp, Analogico
 		{20, "GearIns", 	RoutineMarcia, 			0, 0} // Marcia Inserita
 };
+
 uint8_t Aggiornamento = 0;
-SensDataLog inMemory[4000];
+SensDataLog  inMemory[MAXDATA];
+SensDataLog1 inMemoryData[NSensori][MAXDATA];
+uint16_t inMemoryIndex[NSensori] = {0};
+
 /* USER CODE END 0 */
 
 /**
@@ -107,7 +116,10 @@ SensDataLog inMemory[4000];
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  for (uint8_t i = 0; i < NSensori; i++) {
+	  for(uint16_t p = 0; p < MAXDATA; p++)
+		  inMemoryData[i][p] = {0}; // inizializzo la variabile ??
+  }
   /* USER CODE END 1 */
   
 
@@ -158,22 +170,26 @@ void aggSensMemoria() {
 	if (d >= MAXDATA-NSensori) {
 		dumpMemoriaUART();
 	}
-	for (uint8_t i = 0; i < NSensori; i++) {
-		timestamp tsmpTemp = {Orario.millis,
-		Orario.secondi, Orario.minuti, Orario.ore};
-		uint16_t ValoreTemp;
+	if (!memBusy) {
+		/*for (uint8_t i = 0; i < NSensori; i++) {
+			timestamp tsmpTemp = {Orario.millis,
+			Orario.secondi, Orario.minuti, Orario.ore};
+			uint16_t ValoreTemp;
 
-		SList[i].func(&ValoreTemp, SList[i].helper);
+			SList[i].func(&ValoreTemp, SList[i].helper);
 
-		inMemory[d].IDSensore = i;
-		inMemory[d].Valore = ValoreTemp;
-		inMemory[d].tmps = tsmpTemp;
+			inMemory[d].IDSensore = i;
+			inMemory[d].Valore = ValoreTemp;
+			inMemory[d].tmps = tsmpTemp;
 
-		SList[i].lastValoreChecked = ValoreTemp;
-		d++;
+			SList[i].lastValoreChecked = ValoreTemp;
+			d++;
+		}*/
 	}
 }
+void RoutineSMOT(uint16_t *buffer, uint8_t helper) {
 
+}
 void RoutineAccelerometro(uint16_t *buffer, uint8_t helper) {
 
 }
@@ -183,8 +199,8 @@ void RoutineRF(uint16_t *buffer, uint8_t helper) {
 void RoutineGiroscopio(uint16_t *buffer, uint8_t helper) {
 
 }
-void RoutineSmot(uint16_t *buffer, uint8_t helper) {
-
+void noRoutine(uint16_t *buffer, uint8_t helper) {
+	// in questo caso il sensore viene aggiornato tramite interrupt e non con il polling
 }
 void RoutineV(uint16_t *buffer, uint8_t helper) {
 

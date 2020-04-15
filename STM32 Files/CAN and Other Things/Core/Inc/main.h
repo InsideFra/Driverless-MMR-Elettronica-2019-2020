@@ -33,7 +33,12 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#define SMOTIndex 7
 
+#define MAXDATA 500
+#define NSensori 21
+#define HIGH 1
+#define LOW 0
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -46,10 +51,21 @@ typedef struct {
 } timestamp;
 
 typedef struct {
+	uint16_t millis;
+	uint8_t secondi;
+	uint8_t minuti;
+} timestamp1;
+
+typedef struct {
 	uint8_t IDSensore;
 	uint16_t Valore;
 	timestamp tmps;
 } SensDataLog;
+
+typedef struct {
+	uint16_t Valore;
+	timestamp1 tmps;
+} SensDataLog1;
 
 typedef struct {
 	uint8_t IDSensore;
@@ -63,7 +79,6 @@ void sensCanReq();
 void RoutineAccelerometro(uint16_t *buffer, uint8_t helper);
 void RoutineRF(uint16_t *buffer, uint8_t helper);
 void RoutineGiroscopio(uint16_t *buffer, uint8_t helper);
-void RoutineSmot(uint16_t *buffer, uint8_t helper);
 void RoutineV(uint16_t *buffer, uint8_t helper);
 void RoutineAPPS(uint16_t *buffer, uint8_t helper);
 void RoutineTPS(uint16_t *buffer, uint8_t helper);
@@ -73,6 +88,8 @@ void RoutineMarcia(uint16_t *buffer, uint8_t helper);
 void RoutineTempAcqua(uint16_t *buffer, uint8_t helper);
 void RoutineTempOlio(uint16_t *buffer, uint8_t helper);
 void RoutineTempAria(uint16_t *buffer, uint8_t helper);
+void noRoutine(uint16_t *buffer, uint8_t helper);
+void RoutineSMOT(uint16_t *buffer, uint8_t helper);
 void aggSensMemoria();
 /* USER CODE END ET */
 
@@ -96,6 +113,9 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define SmotSensor_Pin GPIO_PIN_0
+#define SmotSensor_GPIO_Port GPIOA
+#define SmotSensor_EXTI_IRQn EXTI0_IRQn
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
