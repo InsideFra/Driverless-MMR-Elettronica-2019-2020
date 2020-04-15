@@ -25,3 +25,5 @@ STM32 Files/CAN and Other Things/Debug/Core/Src/gpio.o
 STM32 Files/CAN and Other Things/Debug/Core/Src/main.su
 STM32 Files/CAN and Other Things/Debug/Core/Src/sdio.o
 STM32 Files/CAN and Other Things/Debug/Core/Src/spi.o
+*.o
+*.su
