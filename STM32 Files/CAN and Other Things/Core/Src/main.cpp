@@ -67,7 +67,7 @@ uint8_t engineTickUPD = 1; // millisecondi
 
 //	ENGINE RPM SECTION
 uint8_t memBusy = 0;
-
+int8_t SmotLastValue = -1; // reset value
 uint8_t newCanRx = 0;
 
 CAN_TxHeaderTypeDef   TxHeader;
@@ -228,6 +228,32 @@ void RoutineTempOlio(uint16_t *buffer, uint8_t helper) {
 }
 void RoutineTempAria(uint16_t *buffer, uint8_t helper) {
 
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	if(GPIO_Pin == SmotSensor_Pin) {
+		uint8_t readValue = HAL_GPIO_ReadPin(SmotSensor_GPIO_Port, SmotSensor_Pin);
+		timestamp1 buff;
+		buff.millis = Orario.millis;
+		buff.minuti = Orario.minuti;
+		buff.secondi = Orario.secondi;
+
+		if(inMemoryIndex[SMOTIndex] >= MAXDATA) {
+			// procedura in caso di memoria piena
+		}
+		if(SmotLastValue == -1)
+			SmotLastValue = readValue; // prima lettura
+		else if(SmotLastValue == LOW && readValue == HIGH) { // rising edge
+			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].Valore = 0;
+			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].tmps = buff;
+			inMemoryIndex[SMOTIndex]++;
+		}
+		else if(SmotLastValue == HIGH && readValue == LOW) { // falling edge
+			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].Valore = 1;
+			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].tmps = buff;
+			inMemoryIndex[SMOTIndex]++;
+		}
+	}
 }
 /* USER CODE END 4 */
 

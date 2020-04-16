@@ -42,9 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-int8_t SmotLastValue = -1; // reset value
-extern SensDataLog1 inMemoryData[NSensori][MAXDATA];
-extern uint16_t inMemoryIndex[NSensori];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,7 +58,6 @@ extern uint16_t inMemoryIndex[NSensori];
 /* External variables --------------------------------------------------------*/
 extern CAN_HandleTypeDef hcan2;
 extern TIM_HandleTypeDef htim2;
-extern timestamp Orario;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -207,28 +204,9 @@ void SysTick_Handler(void)
 void EXTI0_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_IRQn 0 */
-  uint8_t readValue = HAL_GPIO_ReadPin(SmotSensor_GPIO_Port, SmotSensor_Pin);
-  timestamp1 buff;
-  buff.millis = Orario.millis;
-  buff.minuti = Orario.minuti;
-  buff.secondi = Orario.secondi;
 
-  if(inMemoryIndex[SMOTIndex] >= MAXDATA) {
-	  // procedura in caso di memoria piena
-  }
-  if(SmotLastValue == -1)
-	  SmotLastValue = readValue;
-  else if(SmotLastValue == LOW && readValue == HIGH) { // rising edge
-	  inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].Valore = 0;
-	  inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].tmps = buff;
-	  inMemoryIndex[SMOTIndex]++;
-  }
-  else if(SmotLastValue == HIGH && readValue == LOW) { // falling edge
-	  inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].Valore = 1;
-	  inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].tmps = buff;
-	  inMemoryIndex[SMOTIndex]++;
-  }
   /* USER CODE END EXTI0_IRQn 0 */
+
   /* USER CODE BEGIN EXTI0_IRQn 1 */
   HAL_GPIO_EXTI_IRQHandler(SmotSensor_Pin);
   /* USER CODE END EXTI0_IRQn 1 */

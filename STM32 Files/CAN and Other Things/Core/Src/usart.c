@@ -22,7 +22,7 @@
 
 /* USER CODE BEGIN 0 */
 extern uint16_t d;
-extern SensDataLog inMemory[3000];
+//extern SensDataLog inMemory[3000]; variabile deprecata
 uint16_t lastSensDump = 0;
 uint16_t i = 0;
 uint8_t dataFormat[25] = "[00:00:00:000] 000 0000;";
@@ -106,16 +106,16 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
 /* USER CODE BEGIN 1 */
 void dumpMemoriaUART() {
-	i = 0;
+	/*i = 0;
 	adjustTimestamp(dataFormat, inMemory[i].tmps);
 	adjustID(dataFormat, inMemory[i].IDSensore);
 	adjustValue(dataFormat, inMemory[i].Valore);
 
-	HAL_UART_Transmit_IT(&huart2, dataFormat, 25);
+	HAL_UART_Transmit_IT(&huart2, dataFormat, 25);*/
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart2) {
-	lastSensDump++;
+	/*lastSensDump++;
 	if(lastSensDump < d) {
 		i = lastSensDump;
 		adjustTimestamp(dataFormat, inMemory[i].tmps);
@@ -126,7 +126,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart2) {
 	} else {
 		d = 0;
 		lastSensDump = 0;
-	}
+	}*/
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart2) {

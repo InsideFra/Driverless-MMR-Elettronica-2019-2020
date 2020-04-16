@@ -33,10 +33,15 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+// AGGIORNARE QUESTI DEFINE SEGUENDO LA LISTA IN MAIN.C SensList SList
 #define SMOTIndex 7
 
+// AGGIORNARE QUESTI DEFINE SECONDO LE ESIGENZE DI MEMORIA
 #define MAXDATA 500
 #define NSensori 21
+
+// DEFINE GPIO
 #define HIGH 1
 #define LOW 0
 /* USER CODE END Includes */
@@ -50,6 +55,7 @@ typedef struct {
 	uint8_t ore;
 } timestamp;
 
+// TIMESTAMP modificato per occupare meno memoria (tempo di utilizzo max 59 minuti)
 typedef struct {
 	uint16_t millis;
 	uint8_t secondi;
@@ -62,11 +68,13 @@ typedef struct {
 	timestamp tmps;
 } SensDataLog;
 
+// SE SI TENGONO AGGIORNATI I DEFINE SI PUÒ RISPARMIARE UN BYTE PER OGNI CAMPIONAMENTO
 typedef struct {
 	uint16_t Valore;
 	timestamp1 tmps;
 } SensDataLog1;
 
+//
 typedef struct {
 	uint8_t IDSensore;
 	char Nome[24];
