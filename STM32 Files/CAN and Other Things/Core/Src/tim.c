@@ -21,9 +21,11 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
-extern timestamp Orario;
-extern uint8_t Aggiornamento;
-extern void aggSensMemoria();
+extern timestamp 	Orario;
+extern uint8_t 		Aggiornamento;
+extern void 		aggSensMemoria();
+extern uint16_t	 	timeoutRPM_last;
+extern const uint16_t timeoutRPM;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
@@ -98,7 +100,13 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 } 
 
 /* USER CODE BEGIN 1 */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim2) {
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim2) { // tick 1 millisecondo
+	timeoutRPM_last++;
+
+	if(timeoutRPM_last >= timeoutRPM) {
+		// errore timeout sensore rpm;;
+	}
+
 	Orario.millis++;
 	if(Orario.millis >= 1000) {
 		Orario.secondi++;

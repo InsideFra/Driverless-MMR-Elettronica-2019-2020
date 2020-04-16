@@ -62,12 +62,13 @@ extern void dumpMemoriaUART();
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-// 	ENGINE RPM SECTION
-uint8_t engineTickUPD = 1; // millisecondi
-
 //	ENGINE RPM SECTION
 uint8_t memBusy = 0;
 int8_t SmotLastValue = -1; // reset value
+const uint8_t 	tickAggRPM 		= 5; // Ogni 5 dati ricevuti aggiornare RPM Media
+const uint16_t 	timeoutRPM 		= 500; // timeout errore sensore e/o motore spento (millisecondi)
+uint8_t 		tickAggRPM_last = 0;
+uint16_t	 	timeoutRPM_last = 0;
 uint8_t newCanRx = 0;
 
 CAN_TxHeaderTypeDef   TxHeader;
@@ -78,7 +79,7 @@ uint32_t              TxMailbox;
 timestamp 			  Orario = {0, 0, 0, 0};
 uint16_t d = 0;
 SensList SList[NSensori] = {
-	//	ID,  NOME, 			Routine, 			 	h, UltimoValore;
+	//	ID,  NOME, 			Routine Polling,	 	h, UltimoValore;
 		{0,  "Acc X", 		RoutineAccelerometro, 	0, 0}, // Analogico
 		{1,  "Acc Y", 		RoutineAccelerometro, 	1, 0}, // Analogico
 		{2,  "Giroscopio", 	RoutineGiroscopio, 		0, 0}, // Analogico
@@ -96,16 +97,32 @@ SensList SList[NSensori] = {
 		{14, "TPS2",    	RoutineTPS, 			1, 0}, // Potenziometro Apertura Farfalla Backup
 		{15, "DAC", 		RoutineDAC,				0, 0}, // Acceleratore STM32
 		{16, "Frizione",	RoutineFrizione, 		0, 0}, //
-		{17, "TempOlio", 	RoutineTempOlio, 		0, 0}, // Sens. Temp. Olio,		Analogico
-		{18, "TempAcqua", 	RoutineTempAcqua, 		0, 0}, // Sens. Temp. Acqua, 	Analogico
-		{19, "TempAria",	RoutineTempAria, 		0, 0}, // Sens. Temp. Aria Asp, Analogico
-		{20, "GearIns", 	RoutineMarcia, 			0, 0} // Marcia Inserita
+		{17, "STempOlio", 	RoutineTempOlio, 		0, 0}, // Sens. Temp. Olio,		Analogico
+		{18, "STempAcqua", 	RoutineTempAcqua, 		0, 0}, // Sens. Temp. Acqua, 	Analogico
+		{19, "STempAria",	RoutineTempAria, 		0, 0}, // Sens. Temp. Aria Asp, Analogico
+		{20, "SGear", 	RoutineMarcia, 			0, 0} // Marcia Inserita
 };
 
 uint8_t Aggiornamento = 0;
-SensDataLog  inMemory[MAXDATA];
 SensDataLog1 inMemoryData[NSensori][MAXDATA];
 uint16_t inMemoryIndex[NSensori] = {0};
+
+// Questi dati vengono aggiornati tramite polling/interrupt
+// cambiare gli ID potrebbe corrompere il programma
+DataList ValoriVeicolo[] = {
+//		ID	NOME					Ultimo Valore Aggiornato (16bit)
+//		Si aggiorna inHAL_GPIO_EXTI_Callback
+		{0,	"RPM Ist", 				0}, // Valore si aggiorna ogni 2 valori consecutivi.
+//		Si aggiorna inHAL_GPIO_EXTI_Callback
+		{1,	"RPM Media",			0},	// Valore si aggiorna ogni uint8_t tickAggRPM consecutivi.
+		{2,	"Stato Motore",			0},	// 0 = Spento, 1 = Acceso
+		{3, "Stato Veicolo",		0}, // da regolamento
+		{4, "AngoloAsp",			0}, // valore in gradi
+		{5,	"TempOlioMot",	 		0}, // valore in gradi cent
+		{6, "TempAcquaMot", 		0}, // valore in gradi cent
+		{7, "TempAriaAsp",			0}, // valore in gradi cent
+		{8, "AngoloAcc",			0} 	// valore in gradi
+};
 
 /* USER CODE END 0 */
 
@@ -230,14 +247,14 @@ void RoutineTempAria(uint16_t *buffer, uint8_t helper) {
 
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) { // External GPIO Interrupt line 0 HAL
 	if(GPIO_Pin == SmotSensor_Pin) {
 		uint8_t readValue = HAL_GPIO_ReadPin(SmotSensor_GPIO_Port, SmotSensor_Pin);
 		timestamp1 buff;
 		buff.millis = Orario.millis;
 		buff.minuti = Orario.minuti;
 		buff.secondi = Orario.secondi;
-
+		timeoutRPM_last = 0;
 		if(inMemoryIndex[SMOTIndex] >= MAXDATA) {
 			// procedura in caso di memoria piena
 		}
@@ -252,6 +269,17 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].Valore = 1;
 			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].tmps = buff;
 			inMemoryIndex[SMOTIndex]++;
+		}
+		tickAggRPM_last++;
+		if(tickAggRPM_last == tickAggRPM) {
+			uint16_t valorMedioRPM = 0;
+			for(uint8_t i = 0; i < tickAggRPM; i++) {
+				//valorMedioRPM =+ inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex] - 1 - i].Valore;
+				// TODO Sviluppare Modello Matlab RPM e Inserire
+			}
+			//valorMedioRPM = valorMedioRPM/tickAggRPM; // verificare questo calcolo e vedere come migliorarlo
+			tickAggRPM_last = 0;
+			ValoriVeicolo[RPMedia].Valore = valorMedioRPM;
 		}
 	}
 }

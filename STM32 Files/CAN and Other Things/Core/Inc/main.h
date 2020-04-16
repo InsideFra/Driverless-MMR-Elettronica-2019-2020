@@ -36,10 +36,12 @@ extern "C" {
 
 // AGGIORNARE QUESTI DEFINE SEGUENDO LA LISTA IN MAIN.C SensList SList
 #define SMOTIndex 7
+#define RPMedia 1
 
 // AGGIORNARE QUESTI DEFINE SECONDO LE ESIGENZE DI MEMORIA
 #define MAXDATA 500
 #define NSensori 21
+#define NValori
 
 // DEFINE GPIO
 #define HIGH 1
@@ -82,6 +84,12 @@ typedef struct {
 	uint8_t helper;
 	uint16_t lastValoreChecked;
 } SensList;
+
+typedef struct {
+	uint8_t IDValore;
+	char Nome[24];
+	int16_t Valore;
+} DataList;
 
 void sensCanReq();
 void RoutineAccelerometro(uint16_t *buffer, uint8_t helper);
