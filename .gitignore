@@ -1,14 +1,8 @@
-
-STM32 Files/CAN and Other Things/Debug/CANProject.elf
-STM32 Files/CAN and Other Things/Debug/CANProject.hex
-STM32 Files/CAN and Other Things/Debug/CANProject.list
-STM32 Files/CAN and Other Things/Debug/CANProject.map
-STM32 Files/CAN and Other Things/Debug/CANProject.hex
-STM32 Files/CAN and Other Things/Debug/CANProject.map
-STM32 Files/CAN and Other Things/Debug/CANProject.elf
-STM32 Files/CAN and Other Things/.settings/language.settings.xml
-STM32 Files/CAN and Other Things/Debug/CANProject.hex
-STM32 Files/CAN and Other Things/Debug/CANProject.list
-STM32 Files/CAN and Other Things/Debug/CANProject.map
+STM32 Files/CAN and Other Things/Debug/
+STM32 Files/CAN and Other Things/Drivers/
+STM32 Files/CAN and Other Things/FATFS/
+STM32 Files/CAN and Other Things/Middlewares/
 *.o
 *.su
+*.hex
+*.elf
