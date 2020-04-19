@@ -1,7 +1,6 @@
-STM32 Files/CAN and Other Things/Debug/**
-STM32 Files/CAN and Other Things/Drivers/
-STM32 Files/CAN and Other Things/Middlewares/
-STM32 Files/CAN and Other Things/**
+STM32 Files/CAN and Other Things/Debug
+STM32 Files/CAN and Other Things/Drivers
+STM32 Files/CAN and Other Things/Middlewares
 !STM32 Files/CAN and Other Things/Core
 *.o
 *.su
