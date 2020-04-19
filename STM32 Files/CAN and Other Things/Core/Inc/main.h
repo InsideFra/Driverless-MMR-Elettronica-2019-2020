@@ -35,17 +35,25 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 
 // AGGIORNARE QUESTI DEFINE SEGUENDO LA LISTA IN MAIN.C SensList SList
-#define SMOTIndex 7
+#define SMOTIndex 5
 #define RPMedia 1
 
 // AGGIORNARE QUESTI DEFINE SECONDO LE ESIGENZE DI MEMORIA
-#define MAXDATA 500
-#define NSensori 21
+#define MAXDATA8bit 	700
+#define MAXDATA16bit 	900
+#define NSensori16bit	9
+#define NSensori8bit	13
 #define NValori
 
 // DEFINE GPIO
 #define HIGH 1
 #define LOW 0
+
+// DEFINE ADC MCP3208
+#define SPI_CS_PIN 	LD2_Pin 		// SPI slave select
+#define SPI_CS_PORT LD2_GPIO_Port 	// SPI slave select
+#define ADC_VREF 	3300			// 5v Vref
+#define ADC_CLK 	1600000 		// SPI clock 1.6MHz
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -73,8 +81,13 @@ typedef struct {
 // SE SI TENGONO AGGIORNATI I DEFINE SI PUÒ RISPARMIARE UN BYTE PER OGNI CAMPIONAMENTO
 typedef struct {
 	uint16_t Valore;
-	timestamp1 tmps;
-} SensDataLog1;
+	uint16_t tmps;
+} SensDataLog16;
+
+typedef struct {
+	uint8_t Valore;
+	uint16_t tmps;
+} SensDataLog8;
 
 //
 typedef struct {
@@ -129,6 +142,9 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define B1_EXTI_IRQn EXTI15_10_IRQn
+#define csADC1_Pin GPIO_PIN_0
+#define csADC1_GPIO_Port GPIOC
 #define SmotSensor_Pin GPIO_PIN_0
 #define SmotSensor_GPIO_Port GPIOA
 #define SmotSensor_EXTI_IRQn EXTI0_IRQn
@@ -138,6 +154,18 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define rfAS_Pin GPIO_PIN_6
+#define rfAS_GPIO_Port GPIOA
+#define rfAS_EXTI_IRQn EXTI9_5_IRQn
+#define rfAD_Pin GPIO_PIN_7
+#define rfAD_GPIO_Port GPIOA
+#define rfAD_EXTI_IRQn EXTI9_5_IRQn
+#define rfPD_Pin GPIO_PIN_5
+#define rfPD_GPIO_Port GPIOC
+#define rfPD_EXTI_IRQn EXTI9_5_IRQn
+#define rfPS_Pin GPIO_PIN_9
+#define rfPS_GPIO_Port GPIOC
+#define rfPS_EXTI_IRQn EXTI9_5_IRQn
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14

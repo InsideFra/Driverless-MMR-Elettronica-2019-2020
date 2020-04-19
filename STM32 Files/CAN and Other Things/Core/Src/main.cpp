@@ -30,7 +30,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "MCP3208.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,41 +71,50 @@ uint8_t 		tickAggRPM_last = 0;
 uint16_t	 	timeoutRPM_last = 0;
 uint8_t newCanRx = 0;
 
-CAN_TxHeaderTypeDef   TxHeader;
-CAN_RxHeaderTypeDef   RxHeader;
-uint8_t               TxData[8];
-uint8_t               RxData[8];
-uint32_t              TxMailbox;
-timestamp 			  Orario = {0, 0, 0, 0};
+CAN_TxHeaderTypeDef   	TxHeader;
+CAN_RxHeaderTypeDef   	RxHeader;
+uint8_t               	TxData[8];
+uint8_t               	RxData[8];
+uint32_t              	TxMailbox;
+timestamp 			  	Orario = {0, 0, 0, 0};
+uint16_t				tmpsMemory = 0;
 uint16_t d = 0;
-SensList SList[NSensori] = {
+SensList SList16[NSensori16bit] = {
 	//	ID,  NOME, 			Routine Polling,	 	h, UltimoValore;
 		{0,  "Acc X", 		RoutineAccelerometro, 	0, 0}, // Analogico
 		{1,  "Acc Y", 		RoutineAccelerometro, 	1, 0}, // Analogico
 		{2,  "Giroscopio", 	RoutineGiroscopio, 		0, 0}, // Analogico
-		{3,  "RF AS", 		RoutineRF, 				0, 0}, // Ruota Fonica, Digitale
-		{4,  "RF AD", 		RoutineRF, 				1, 0}, // Ruota Fonica, Digitale
-		{5,  "RF PS", 		RoutineRF, 				2, 0}, // Ruota Fonica, Digitale
-		{6,  "RF PD", 		RoutineRF, 				3, 0}, // Ruota Fonica, Digitale
-		{7,  "SMOT",    	noRoutine, 				0, 0}, // Sens. giri motore, Digitale
-		{8,  "V Batt1", 	RoutineV, 				0, 0}, // Analogico, V Batteria 12v
-		{9,  "V Batt2", 	RoutineV, 				1, 0}, // Analogico, V Batteria 12v
-		{10, "V Batt3", 	RoutineV, 				2, 0}, // Analogico, V Batteria 12v
-		{11, "APPS1",   	RoutineAPPS,			0, 0}, // Potenziometro Acceleratore
-		{12, "APPS2",   	RoutineAPPS, 			1, 0}, // Potenziometro Acceleratore Backup
-		{13, "TPS1",    	RoutineTPS, 			0, 0}, // Potenziometro Apertura Farfalla
-		{14, "TPS2",    	RoutineTPS, 			1, 0}, // Potenziometro Apertura Farfalla Backup
-		{15, "DAC", 		RoutineDAC,				0, 0}, // Acceleratore STM32
-		{16, "Frizione",	RoutineFrizione, 		0, 0}, //
-		{17, "STempOlio", 	RoutineTempOlio, 		0, 0}, // Sens. Temp. Olio,		Analogico
-		{18, "STempAcqua", 	RoutineTempAcqua, 		0, 0}, // Sens. Temp. Acqua, 	Analogico
-		{19, "STempAria",	RoutineTempAria, 		0, 0}, // Sens. Temp. Aria Asp, Analogico
-		{20, "SGear", 	RoutineMarcia, 			0, 0} // Marcia Inserita
+		{3, "APPS1",   		RoutineAPPS,			0, 0}, // Potenziometro Acceleratore
+		{4, "APPS2",   		RoutineAPPS, 			1, 0}, // Potenziometro Acceleratore Backup
+		{5, "TPS1",    		RoutineTPS, 			0, 0}, // Potenziometro Apertura Farfalla
+		{6, "TPS2",    		RoutineTPS, 			1, 0}, // Potenziometro Apertura Farfalla Backup
+		{7, "DAC", 			RoutineDAC,				0, 0}, // Acceleratore STM32
+		{8, "Frizione",		RoutineFrizione, 		0, 0}, //
+};
+
+SensList SList8[NSensori8bit] = {
+	//	ID,		NOME, 			Routine Polling,	 	h, UltimoValore;
+		{1, 	"RF AS", 		noRoutine, 				0, 0},	// Ruota Fonica, Digitale
+		{2, 	"RF AD", 		noRoutine, 				0, 0},	// Ruota Fonica, Digitale
+		{3, 	"RF PS", 		noRoutine, 				0, 0},	// Ruota Fonica, Digitale
+		{4, 	"RF PD", 		noRoutine, 				0, 0},	// Ruota Fonica, Digitale
+		{5, 	"SMOT",	    	noRoutine, 				0, 0},	// Sensore Crankshaft
+		{6, 	"V Batt1",	 	RoutineV, 				0, 0},	// Analogico, V Batteria 12v
+		{7, 	"V Batt2", 		RoutineV, 				1, 0},	// Analogico, V Batteria 12v
+		{8, 	"V Batt3", 		RoutineV, 				2, 0},	// Analogico, V Batteria 12v
+		{9, 	"STempOlio", 	RoutineTempOlio, 		0, 0},	// Sens. Temp. Olio,		Analogico
+		{10,	"STempAcqua", 	RoutineTempAcqua, 		0, 0},	// Sens. Temp. Acqua, 	Analogico
+		{11,	"STempAria",	RoutineTempAria, 		0, 0},	// Sens. Temp. Aria Asp, Analogico
+		{12,	"SGear", 		RoutineMarcia, 			0, 0},	// Marcia Inserita
+		{13, 	"SCAM",			noRoutine,				0, 0}	// Sensore albero a camme
 };
 
 uint8_t Aggiornamento = 0;
-SensDataLog1 inMemoryData[NSensori][MAXDATA];
-uint16_t inMemoryIndex[NSensori] = {0};
+
+SensDataLog8 	inMemoryData8[NSensori8bit][MAXDATA8bit];
+SensDataLog16 	inMemoryData16[NSensori16bit][MAXDATA16bit];
+uint16_t 		inMemoryIndex8[NSensori8bit];
+uint16_t 		inMemoryIndex16[NSensori16bit];
 
 // Questi dati vengono aggiornati tramite polling/interrupt
 // cambiare gli ID potrebbe corrompere il programma
@@ -124,6 +133,8 @@ DataList ValoriVeicolo[] = {
 		{8, "AngoloAcc",			0} 	// valore in gradi
 };
 
+MCP3208 adc(ADC_VREF, SPI_CS_PORT, SPI_CS_PIN, &hspi2);
+
 /* USER CODE END 0 */
 
 /**
@@ -133,10 +144,11 @@ DataList ValoriVeicolo[] = {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  for (uint8_t i = 0; i < NSensori; i++) {
+  /*for (uint8_t i = 0; i < NSensori; i++) {
 	  for(uint16_t p = 0; p < MAXDATA; p++)
 		  inMemoryData[i][p] = {0}; // inizializzo la variabile ??
-  }
+  }*/
+  inMemoryData16[0][0] = {0, 1234};
   /* USER CODE END 1 */
   
 
@@ -157,13 +169,14 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_CAN2_Init();
-  MX_DAC_Init();
-  MX_SDIO_SD_Init();
-  MX_SPI2_Init();
-  MX_TIM2_Init();
-  MX_USART2_UART_Init();
+	MX_GPIO_Init();
+	MX_CAN2_Init();
+	MX_DAC_Init();
+	MX_SDIO_SD_Init();
+	MX_SPI2_Init();
+	MX_TIM2_Init();
+	MX_USART2_UART_Init();
+	MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
   /* Infinite loop */
@@ -184,11 +197,11 @@ void sensCanReq() {
 }
 
 void aggSensMemoria() {
-	if (d >= MAXDATA-NSensori) {
+	/*if (d >= MAXDATA-NSensori) {
 		dumpMemoriaUART();
 	}
 	if (!memBusy) {
-		/*for (uint8_t i = 0; i < NSensori; i++) {
+		for (uint8_t i = 0; i < NSensori; i++) {
 			timestamp tsmpTemp = {Orario.millis,
 			Orario.secondi, Orario.minuti, Orario.ore};
 			uint16_t ValoreTemp;
@@ -201,8 +214,8 @@ void aggSensMemoria() {
 
 			SList[i].lastValoreChecked = ValoreTemp;
 			d++;
-		}*/
-	}
+		}
+	}*/
 }
 void RoutineSMOT(uint16_t *buffer, uint8_t helper) {
 
@@ -248,29 +261,25 @@ void RoutineTempAria(uint16_t *buffer, uint8_t helper) {
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) { // External GPIO Interrupt line 0 HAL
-	if(GPIO_Pin == SmotSensor_Pin) {
+	if(GPIO_Pin == SmotSensor_Pin) { // Callback Sensore Motore
 		uint8_t readValue = HAL_GPIO_ReadPin(SmotSensor_GPIO_Port, SmotSensor_Pin);
-		timestamp1 buff;
-		buff.millis = Orario.millis;
-		buff.minuti = Orario.minuti;
-		buff.secondi = Orario.secondi;
 		timeoutRPM_last = 0;
-		if(inMemoryIndex[SMOTIndex] >= MAXDATA) {
-			// procedura in caso di memoria piena
-		}
-		if(SmotLastValue == -1)
+
+		if(SmotLastValue == -1) {
 			SmotLastValue = readValue; // prima lettura
+			inMemoryData8[SMOTIndex][inMemoryIndex8[SMOTIndex]].Valore = readValue;
+			inMemoryData8[SMOTIndex][inMemoryIndex8[SMOTIndex]].tmps = tmpsMemory; }
 		else if(SmotLastValue == LOW && readValue == HIGH) { // rising edge
-			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].Valore = 0;
-			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].tmps = buff;
-			inMemoryIndex[SMOTIndex]++;
-		}
+			inMemoryData8[SMOTIndex][inMemoryIndex8[SMOTIndex]].Valore = 0;
+			inMemoryData8[SMOTIndex][inMemoryIndex8[SMOTIndex]].tmps = tmpsMemory; }
 		else if(SmotLastValue == HIGH && readValue == LOW) { // falling edge
-			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].Valore = 1;
-			inMemoryData[SMOTIndex][inMemoryIndex[SMOTIndex]].tmps = buff;
-			inMemoryIndex[SMOTIndex]++;
-		}
+			inMemoryData8[SMOTIndex][inMemoryIndex8[SMOTIndex]].Valore = 1;
+			inMemoryData8[SMOTIndex][inMemoryIndex8[SMOTIndex]].tmps = tmpsMemory; }
+
+		inMemoryIndex8[SMOTIndex]++;
+
 		tickAggRPM_last++;
+
 		if(tickAggRPM_last == tickAggRPM) {
 			uint16_t valorMedioRPM = 0;
 			for(uint8_t i = 0; i < tickAggRPM; i++) {
@@ -281,6 +290,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) { // External GPIO Interrupt line
 			tickAggRPM_last = 0;
 			ValoriVeicolo[RPMedia].Valore = valorMedioRPM;
 		}
+
+		if(inMemoryIndex8[SMOTIndex] >= MAXDATA8bit - tickAggRPM) {
+			// TODO Dove salvo questi dati?
+			inMemoryIndex8[SMOTIndex] = 0;
+		}
+
 	}
 }
 /* USER CODE END 4 */
@@ -298,7 +313,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the CPU, AHB and APB busses clocks
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
@@ -307,11 +322,17 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 66;
+  RCC_OscInitStruct.PLL.PLLN = 180;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLQ = 8;
   RCC_OscInitStruct.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Activate the Over-Drive mode
+  */
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }
@@ -321,10 +342,10 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     Error_Handler();
   }

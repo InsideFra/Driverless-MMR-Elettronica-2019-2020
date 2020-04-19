@@ -9,10 +9,10 @@
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -26,6 +26,7 @@ extern uint8_t 		Aggiornamento;
 extern void 		aggSensMemoria();
 extern uint16_t	 	timeoutRPM_last;
 extern const uint16_t timeoutRPM;
+extern uint16_t 	tmpsMemory;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
@@ -102,7 +103,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 /* USER CODE BEGIN 1 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim2) { // tick 1 millisecondo
 	timeoutRPM_last++;
-
+	if(tmpsMemory < 0xFFFF) {
+		tmpsMemory = 0;
+	}
 	if(timeoutRPM_last >= timeoutRPM) {
 		// errore timeout sensore rpm;;
 	}
