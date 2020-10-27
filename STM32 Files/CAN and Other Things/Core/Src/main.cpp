@@ -70,7 +70,7 @@ const uint16_t 	timeoutRPM 		= 500; // timeout errore sensore e/o motore spento 
 uint8_t 		tickAggRPM_last = 0;
 uint16_t	 	timeoutRPM_last = 0;
 uint8_t newCanRx = 0;
-
+// TODO ci sta molto da fare
 CAN_TxHeaderTypeDef   	TxHeader;
 CAN_RxHeaderTypeDef   	RxHeader;
 uint8_t               	TxData[8];
@@ -150,7 +150,7 @@ int main(void)
   }*/
   inMemoryData16[0][0] = {0, 1234};
   /* USER CODE END 1 */
-  
+
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -379,7 +379,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
