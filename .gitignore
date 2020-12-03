@@ -6,3 +6,7 @@ STM32 Files/CAN and Other Things/Middlewares
 *.su
 *.hex
 *.elf
+!ROSserial_STM32/Core
+ROSserial_STM32/Debug
+ROSserial_STM32/Drivers
+ROSserial_STM32/Middlewares
