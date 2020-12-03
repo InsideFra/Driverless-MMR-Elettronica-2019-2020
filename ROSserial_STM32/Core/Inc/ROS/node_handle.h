@@ -107,8 +107,36 @@ namespace std_msgs {
 //			return offset;
 			return 0;
 		}
-		private:
+		protected:
 	};
+}
+
+namespace ros {
+//	void normalizeSecNSec(uint32_t &sec, uint32_t &nsec);
+//
+//	class Time
+//	{
+//	public:
+//	  uint32_t sec, nsec;
+//
+//	  Time() : sec(0), nsec(0) {}
+//	  Time(uint32_t _sec, uint32_t _nsec) : sec(_sec), nsec(_nsec)
+//	  {
+//		normalizeSecNSec(sec, nsec);
+//	  }
+//
+//	  double toSec() const { return (double)sec + 1e-9*(double)nsec; };
+//	  void fromSec(double t) { sec = (uint32_t) floor(t); nsec = (uint32_t) round((t-sec) * 1e9); };
+//
+//	  uint32_t toNsec() { return (uint32_t)sec*1000000000ull + (uint32_t)nsec; };
+//	  Time& fromNSec(int32_t t);
+//
+//	  Time& operator +=(const Duration &rhs);
+//	  Time& operator -=(const Duration &rhs);
+//
+//	  static Time now();
+//	  static void setNow( Time & new_now);
+//	};
 }
 
 namespace ros {
@@ -127,7 +155,9 @@ namespace ros {
 		const char * topic_;
 		bool has_flash_topic_;
 	};
+}
 
+namespace ros {
 	template<class Hardware,
            int MAX_SUBSCRIBERS=25,
            int MAX_PUBLISHERS=25,
@@ -136,12 +166,48 @@ namespace ros {
 	class NodeHandle_
 	{
 	public:
-		void requestSyncTime()
-		{
-			std_msgs::Time t;
-			publish(ID_TIME, &t);
-			rt_time = hardware_.time();
-		}
+		/********************************************************************
+		       * Time functions
+		********************************************************************/
+
+	  void requestSyncTime()
+	  {
+		std_msgs::Time t;
+		publish(ID_TIME, &t);
+		rt_time = hardware_.time();
+	  }
+
+//	  void syncTime(uint8_t * data)
+//	  {
+//		std_msgs::Time t;
+//		uint32_t offset = hardware_.time() - rt_time;
+//
+//		t.deserialize(data);
+//		t.data.sec += offset/1000;
+//		t.data.nsec += (offset%1000)*1000000UL;
+//
+//		this->setNow(t.data);
+//		last_sync_receive_time = hardware_.time();
+//	  }
+//
+//	  Time now()
+//	  {
+//		uint32_t ms = hardware_.time();
+//		Time current_time;
+//		current_time.sec = ms/1000 + sec_offset;
+//		current_time.nsec = (ms%1000)*1000000UL + nsec_offset;
+//		normalizeSecNSec(current_time.sec, current_time.nsec);
+//		return current_time;
+//	  }
+//
+//	  void setNow( Time & new_now )
+//	  {
+//		uint32_t ms = hardware_.time();
+//		sec_offset = new_now.sec - ms/1000 - 1;
+//		nsec_offset = new_now.nsec - (ms%1000)*1000000UL + 1000000000UL;
+//		normalizeSecNSec(sec_offset, nsec_offset);
+//	  }
+
 		virtual int publish(int id, Msg *msg)
 		{
 			if(id >= 100 && !configured_)
