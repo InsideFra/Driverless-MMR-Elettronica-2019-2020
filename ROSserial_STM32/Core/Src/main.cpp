@@ -37,7 +37,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-ros::NodeHandle nh;
+ros::NodeHandle rosc;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -110,7 +110,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
-  nh.initNode();
+  rosc.initNode();
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -141,7 +141,7 @@ int main(void)
 
 	 if(smallest != 255) { //UART Messagge found
 		 // read UART MSG
-		 nh.spinOnce(USART_RxBuffer[smallestIndex]);
+		 rosc.spinOnce(USART_RxBuffer[smallestIndex]);
 		 for(uint8_t i = 0; i < MAX_BUFFER_RX_USART; i++)
 			 if(bufferIndex[i] != 0)
 				 bufferIndex[i]--;
