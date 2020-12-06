@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "ROS/ros.h"
+#include "ROS/std_msgs/Float32Array.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -28,7 +29,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define SIZE_DATATOSEND 4
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -38,6 +39,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 ros::NodeHandle rosc;
+std_msgs::Float32 VAng_Data;
+ros::Publisher pub_VAng( "VAng_Data", &VAng_Data);
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -68,6 +71,7 @@ static void MX_I2S3_Init(void);
 static void MX_TIM14_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
+float DataToSend[SIZE_DATATOSEND];
 void ROS_RxMessage();
 /* USER CODE END PFP */
 
@@ -111,6 +115,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
   rosc.initNode();
+  rosc.advertise(pub_VAng);
+
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -119,14 +126,18 @@ int main(void)
 	 // uart
 	 /*
 	  * Come funziona questo sistema?
-	  * Vogliamo evitare del tutto l'utilizzo di funzioni "troppo lunghi"
-	  * 	cosi come vogliamo evitare di elaborare subito i messaggi che arrivano su UART
-	  * Quando arriva un messaggio tramite UART, viene trovato uno spazio libero in bufferIndex
-	  * poi si occupa quello spazio con il numero in coda di messaggi UART
+	  *
 	  *
 	  *
 	  */
-	  // find index i
+
+	 VAng_Data.V_Ang_RF_AD = 23.4;
+	 VAng_Data.V_Ang_RF_AS = 34.56;
+	 VAng_Data.V_Ang_RF_PD = 56.76;
+	 VAng_Data.V_Ang_RF_PS = 78.9;
+	 pub_VAng.publish(&VAng_Data);
+
+	 // find index i
 	 if(currentUsartMessages != 0)
 	 uint8_t smallestIndex = 0;
 	 uint8_t smallest = 255;

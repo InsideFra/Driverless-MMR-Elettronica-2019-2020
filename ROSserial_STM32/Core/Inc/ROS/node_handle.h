@@ -74,6 +74,27 @@ namespace ros {
 	class NodeHandle_ : public NodeHandleBase_
 	{
 	public:
+		NodeHandle_() : configured_(false) {
+
+			for(unsigned int i=0; i< MAX_PUBLISHERS; i++)
+				publishers[i] = 0;
+
+			for(unsigned int i=0; i< MAX_SUBSCRIBERS; i++)
+				subscribers[i] = 0;
+
+			for(unsigned int i=0; i< INPUT_SIZE; i++)
+				message_in[i] = 0;
+
+			for(unsigned int i=0; i< OUTPUT_SIZE; i++)
+				message_out[i] = 0;
+
+			req_param_resp.ints_length = 0;
+			req_param_resp.ints = NULL;
+			req_param_resp.floats_length = 0;
+			req_param_resp.floats = NULL;
+			req_param_resp.ints_length = 0;
+			req_param_resp.ints = NULL;
+		}
 		/********************************************************************
 		       * Time functions
 		********************************************************************/
