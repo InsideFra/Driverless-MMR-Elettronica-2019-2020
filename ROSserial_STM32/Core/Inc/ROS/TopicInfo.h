@@ -121,8 +121,8 @@ namespace rosserial_msgs
      return offset;
     }
 
-    const char * getType(){ ;/*return PSTR( "rosserial_msgs/TopicInfo" );*/ ; }; // TODO: PSTR
-    const char * getMD5(){ ;/*return PSTR( "0ad51f88fc44892f8c10684077646005" );*/ ;}; // TODO: PSTR
+    const char * getType(){ ;/*return PSTR( "rosserial_msgs/TopicInfo" );*/ ; }; // TODO: getType, getMD5
+    const char * getMD5(){ ;/*return PSTR( "0ad51f88fc44892f8c10684077646005" );*/ ;};
 
   };
 

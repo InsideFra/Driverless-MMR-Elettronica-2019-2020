@@ -48,6 +48,7 @@
 #include "ros.h"
 #include "msg.h"
 #include "TopicInfo.h"
+#include "RequestParam.h"
 
 extern uint8_t bufferIndex[MAX_BUFFER_RX_USART];
 
@@ -120,31 +121,31 @@ namespace ros {
 	  	   */
 
 	  	  /* Register a new publisher */
-//	        bool advertise(Publisher & p)
-//	        {
-//	          for(int i = 0; i < MAX_PUBLISHERS; i++){
-//	            if(publishers[i] == 0){ // empty slot
-//	              publishers[i] = &p;
-//	              p.id_ = i+100+MAX_SUBSCRIBERS;
-//	              p.nh_ = this;
-//	              return true;
-//	            }
-//	          }
-//	          return false;
-//	        }
+	        bool advertise(Publisher & p)
+	        {
+	          for(int i = 0; i < MAX_PUBLISHERS; i++){
+	            if(publishers[i] == 0){ // empty slot
+	              publishers[i] = &p;
+	              p.id_ = i+100+MAX_SUBSCRIBERS;
+	              p.nh_ = this;
+	              return true;
+	            }
+	          }
+	          return false;
+	        }
 //
 //	        /* Register a new subscriber */
-//	        template<typename SubscriberT>
-//	        bool subscribe(SubscriberT& s){
-//	          for(int i = 0; i < MAX_SUBSCRIBERS; i++){
-//	            if(subscribers[i] == 0){ // empty slot
-//	              subscribers[i] = static_cast<Subscriber_*>(&s);
-//	              s.id_ = i+100;
-//	              return true;
-//	            }
-//	          }
-//	          return false;
-//	        }
+	        template<typename SubscriberT>
+	        bool subscribe(SubscriberT& s){
+	          for(int i = 0; i < MAX_SUBSCRIBERS; i++){
+	            if(subscribers[i] == 0){ // empty slot
+	              subscribers[i] = static_cast<Subscriber_*>(&s);
+	              s.id_ = i+100;
+	              return true;
+	            }
+	          }
+	          return false;
+	        }
 //
 //	        /* Register a new Service Server */
 //	        template<typename MReq, typename MRes, typename ObjT>
@@ -188,7 +189,7 @@ namespace ros {
 				ti.message_type = (char *) publishers[i]->msg_->getType();
 				ti.md5sum = (char *) publishers[i]->msg_->getMD5();
 				ti.buffer_size = OUTPUT_SIZE;
-//				publish( publishers[i]->getEndpointType(), &ti );
+				publish( publishers[i]->getEndpointType(), &ti );
 			}
 		  }
 
@@ -201,7 +202,7 @@ namespace ros {
 				ti.message_type = (char *) subscribers[i]->getMsgType();
 				ti.md5sum = (char *) subscribers[i]->getMsgMD5();
 				ti.buffer_size = INPUT_SIZE;
-//				publish( subscribers[i]->getEndpointType(), &ti );
+				publish( subscribers[i]->getEndpointType(), &ti );
 			}
 		  }
 
@@ -314,7 +315,7 @@ namespace ros {
 			if( (checksum_%256) == 255){
 				if(topic_ == ID_PUBLISHER){
 					requestSyncTime();
-					//negotiateTopics(); TODO: negotiateTopics;
+					negotiateTopics();
 					last_sync_time = c_time;
 					last_sync_receive_time = c_time;
 					return -1;
@@ -322,10 +323,10 @@ namespace ros {
 				else if(topic_ == ID_TIME){
 					syncTime(message_in);
 				}
-//				else if (topic_ == TopicInfo::ID_PARAMETER_REQUEST){
-//					req_param_resp.deserialize(message_in);
-//					param_recieved= true;
-//				}
+				else if (topic_ == ID_PARAMETER_REQUEST){
+					req_param_resp.deserialize(message_in);
+					param_recieved= true;
+				}
 				else if(topic_ == ID_TX_STOP){
 					configured_ = false;
 				}
@@ -343,6 +344,10 @@ namespace ros {
 		}
 		return 0;
 	  }
+
+	private:
+		bool param_recieved;
+		rosserial_msgs::RequestParamResponse req_param_resp;
 	protected:
 		int mode_;
 		int bytes_;
