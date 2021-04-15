@@ -1,0 +1,18 @@
+RIFLESSIONI GESTIONI MEMORIA
+  
+  velocità angolare::
+  
+  velocità angolare sono 32 bit ossia 4 byte, se ogni 5 dentini la calcolo con un giro di ruota avrò 6 campionamenti con 30 dentini quindi dopò un giro avrò occupato 24 byte, con quattro memorie o solo una avrò occupato 92 byte 
+ con 120 indici avrò che dopo che 120/6=20 giri di ruota ho riempito la memoria con 120*4=480 byte per 4 memorie sono 1.92 KB
+ 
+ senza passare per gli RPM risparmiamo qualche byte;
+ 
+ segnale e tempo
+ 
+ 40 bit *100 = 4000 bit / 8, per una sola struttuta di memoria sono 500 byte per 4 strutture sono 2kB [[ tempo e sign]]
+  quindi con 100 indici per memoria per segnale e tempo e 120 per memoria per velocità angolare e tenendo conto che abbiamo 8 mem(4*2) spendiamo in memoria  circa 4KB 
+  
+  
+  
+  
+  fammi sapere se sono troppi nel caso faccio altre riflessioni
